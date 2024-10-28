@@ -1,3 +1,8 @@
+
+use std::any::Any;
+use std::rc;
+use std::collections::HashMap;
+
 use ascent::*;
 use ascent::aggregators::*;
 
@@ -50,12 +55,133 @@ ascent! {
 }
 
 fn main() {
-    let mut prog = Foo::default();
+    // let mut prog = Foo::default();
 
-    prog.run();
+    // prog.run();
 
-    println!("foo : {:?}", prog.foo);
-    println!("bar : {:?}", prog.bar);
-    println!("edge : {:?}", prog.edge);
-    println!("path len: {:?}", prog.path_len);
+    // println!("foo : {:?}", prog.foo);
+    // println!("bar : {:?}", prog.bar);
+    // println!("edge : {:?}", prog.edge);
+    // println!("path len: {:?}", prog.path_len);
+    // Vector forll type
+
+    
+    let x = 267;
+    //x = 2;
+    let mut y = 1;
+    y = 2;
+    y = x;
+    let i:String = String::from("5");
+    println!("{:?}", i);
+    let mut z:usize = 23;
+    z = x;
+
+    let mut vec = Vec::new();
+    vec.push(x);
+    println!("{:?}", vec);
+    let vec1 = vec; // vec is empty
+    let vec2 = vec![1];
+    println!("{:?}", vec2);
+    //vec.push(y);
+    //vec1.push(z);
+    //let vec2 = vec;
+
+
+    println!("{}, {}", z, x);
+    //println!("{}", vec1[1]);
+    println!("{:?}\n", return_zero());
+    println!("{:?}", partial_add(1234)(3));
 }
+
+// Unit type () return empty 
+fn compute_path() -> (){
+    // Statement do not ends with ; means it returns
+    ()
+}
+
+// i32, i64
+fn return_zero() -> Nat {
+    Nat::Z()
+}
+
+// Sum type, union type
+// ::=  (Ty + ...)
+enum EitherType<T1, T2> {
+    Left(T1),
+    Right(T2),
+}
+
+// Product type
+// ::= (Ty × ...)
+// (i32, i32)
+
+// add: i32 -> i32 -> i32
+fn add(x: i32, y: i32) -> i32 {
+    x + y
+}
+// Arrow / Closure type
+// add: i32 -> (i32 -> i32)
+fn partial_add(x: i32) -> impl Fn(i32) -> i32   {
+    let f = move |y: i32| {
+        x + y
+    };
+    f
+}
+
+// Procedure macro
+#[derive(Debug)]
+enum Nat {
+    Z(),
+}
+
+fn pointer() {
+    
+}
+
+#[derive(Debug)]
+enum List<T> {
+    None(),
+    Cons(T, Box<List<T>>), // 1, (2, (3, 4))
+}
+
+#[test]
+fn test_list() {
+    let none: List<i32> = List::None();
+    let x: List<i32> = List::Cons(1, Box::new(none));
+    let y: List<i32> = List::Cons(3, Box::new(x)); // To do: Use macro to overwrite
+    println!("{:?}", y);
+}
+// fn list_length<T>(input: &List<T>) -> usize {
+//     match input {
+//         List::None() => 0,
+//         List::Cons(_, tail) => 1 + list_length(tail) 
+//     }
+// }
+
+#[test]
+fn test_list_length(){
+    let none: List<i32> = List::None();
+    let x: List<i32> = List::Cons(1, Box::new(none));
+    let y: List<i32> = List::Cons(3, Box::new(x)); // To do: Use macro to overwrite}
+    y.length();
+    //list_length(y);
+    //assert_eq!(LengthMeasure::length(&y), 2);
+    assert_eq!(y.length(), 2);
+}
+
+trait LengthMeasure {
+    // fn length(x: &Self) -> usize;
+    fn length(&self) -> usize;
+}
+
+impl<T> LengthMeasure for List<T> {
+    // fn length(x: &Self) -> usize {
+    //     list_length(x)
+    // }
+    fn length(&self) -> usize {
+        match self {
+            List::None() => 0,
+            List::Cons(_, tail) => 1 + tail.length()
+        }
+    }
+} 
